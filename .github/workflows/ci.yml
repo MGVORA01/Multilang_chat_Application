@@ -34,7 +34,7 @@ jobs:
       JWT_SECRET_KEY: ci-${{ github.run_id }}-${{ github.run_attempt }}-Qx7vLm2pZr9sTk4wNb8yHc3dFg6jUe1a
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
