@@ -7,6 +7,6 @@ sqlalchemy[asyncio]>=2.0.30,<2.1
 asyncpg>=0.29
 alembic>=1.13
 pyjwt>=2.8
-argon2-cffi>=23.1
+argon2-cffi>=25.1.0
 python-multipart>=0.0.9
 setuptools>=83  # build tool; >=83 fixes CVE-2026-59890
