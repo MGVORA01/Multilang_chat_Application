@@ -1,0 +1,15 @@
+# Weekly dependency update PRs (review before merging; transformers must stay <5 for IndicTransToolkit).
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /backend
+    schedule: { interval: weekly }
+    ignore:
+      - dependency-name: transformers
+        versions: [">=5"]
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule: { interval: weekly }
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }

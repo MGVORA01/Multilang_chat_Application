@@ -1,0 +1,44 @@
+# Optional containerised deployment (not required for local development).
+#   docker compose up --build      -> http://localhost:8080
+# Requires backend/.env (JWT_SECRET_KEY etc.); DATABASE_URL is overridden below.
+# Model weights are cached in the hf-cache volume; HF_TOKEN is read from your shell environment.
+# Database and backend publish no ports: only nginx is reachable (bound to localhost by default).
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in your shell}
+      POSTGRES_DB: multilingual_chat
+    volumes: [pgdata:/var/lib/postgresql]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app_user -d multilingual_chat"]
+      interval: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    env_file: backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://app_user:${POSTGRES_PASSWORD}@db:5432/multilingual_chat
+      FRONTEND_ORIGIN: http://localhost:8080
+      HF_TOKEN: ${HF_TOKEN:-}
+      # Only the nginx container can reach the backend (no published port), so trust its X-Forwarded-For.
+      FORWARDED_ALLOW_IPS: "*"
+    volumes: [hf-cache:/home/app/.cache/huggingface]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+    depends_on:
+      db: { condition: service_healthy }
+    mem_limit: 8g
+
+  frontend:
+    build: ./frontend
+    ports: ["127.0.0.1:8080:8080"]  # put a TLS-terminating proxy in front for real deployments
+    depends_on: [backend]
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+
+volumes:
+  pgdata:
+  hf-cache:

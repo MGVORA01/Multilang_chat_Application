@@ -1,0 +1,9 @@
+# CPU-only PyTorch: install with
+#   pip install -r requirements-ml.txt --extra-index-url https://download.pytorch.org/whl/cpu
+torch
+transformers>=4.46,<5  # IndicTransToolkit 1.1.x and the IndicTrans2 remote code are not compatible with 5.x
+sentencepiece
+sacremoses
+IndicTransToolkit
+huggingface_hub
+psutil
